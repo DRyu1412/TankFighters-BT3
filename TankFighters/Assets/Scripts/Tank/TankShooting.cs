@@ -1,7 +1,8 @@
 ﻿using UnityEngine;
 using UnityEngine.UI;
+using Unity.Netcode;
 
-public class TankShooting : MonoBehaviour
+public class TankShooting : NetworkBehaviour
 {
     public int m_PlayerNumber = 1;       
     public Rigidbody m_Shell;            
@@ -38,6 +39,7 @@ public class TankShooting : MonoBehaviour
 
     private void Update()
     {
+        if (!IsOwner) return;
         // Track the current state of the fire button and make decisions based on the current launch force.
 
         m_AimSlider.value = m_MinLaunchForce;
