@@ -65,6 +65,7 @@ public class TankHealth : NetworkBehaviour
         // Play the effects for the death of the tank and deactivate it.
         m_Dead = true;
 
+        m_ExplosionParticles.GetComponent<NetworkObject>().Spawn();
         m_ExplosionParticles.transform.position = transform.position;
         m_ExplosionParticles.gameObject.SetActive(true);
 

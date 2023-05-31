@@ -3,6 +3,7 @@ using Unity.Netcode;
 public class ShellExplosion : NetworkBehaviour
 {
     public LayerMask m_TankMask;
+    public GameObject m_ShellExplosionPrefab;
     public ParticleSystem m_ExplosionParticles;       
     public AudioSource m_ExplosionAudio;              
     public float m_MaxDamage = 100f;                  
@@ -39,13 +40,25 @@ public class ShellExplosion : NetworkBehaviour
             targetHealth.TakeDamage(damage);
         }
 
-        m_ExplosionParticles.transform.parent = null;
-        m_ExplosionParticles.Play();
-        m_ExplosionAudio.Play();
-        Destroy(m_ExplosionParticles.gameObject, m_ExplosionParticles.duration);
-        Destroy(gameObject);
+        PlayExplosionServerRpc();
+       
     }
 
+    [ServerRpc]
+    private void PlayExplosionServerRpc()
+    {
+        //m_ExplosionParticles.transform.parent = null;
+        GameObject shellExplosion = Instantiate(m_ShellExplosionPrefab, transform.position, transform.rotation);
+        shellExplosion.GetComponent<NetworkObject>().Spawn();
+        shellExplosion.GetComponent<ParticleSystem>().Play();
+        //m_ExplosionParticles.Play();
+        m_ExplosionAudio.Play();
+
+        Destroy(m_ExplosionParticles.gameObject, m_ExplosionParticles.duration);
+
+        this.gameObject.GetComponent<NetworkObject>().Despawn();
+        Destroy(gameObject);
+    }
 
     private float CalculateDamage(Vector3 targetPosition)
     {
