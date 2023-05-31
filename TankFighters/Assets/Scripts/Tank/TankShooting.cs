@@ -47,7 +47,8 @@ public class TankShooting : NetworkBehaviour
         if(m_CurrentLaunchForce >= m_MaxLaunchForce && !m_Fired)
         {
             m_CurrentLaunchForce = m_MaxLaunchForce;
-            FireServerRpc();
+            //FireServerRpc(m_CurrentLaunchForce);
+            m_Fired = true;
         }
         else if (Input.GetButtonDown(m_FireButton))
         {
@@ -65,12 +66,12 @@ public class TankShooting : NetworkBehaviour
         }
         else if (Input.GetButtonUp(m_FireButton))
         {
-            FireServerRpc();
+            FireServerRpc(m_CurrentLaunchForce);
         }
     }
 
     [ServerRpc]
-    private void FireServerRpc()
+    private void FireServerRpc(float currentLaunchForce)
     {
         // Instantiate and launch the shell.
         m_Fired = true;
@@ -78,12 +79,12 @@ public class TankShooting : NetworkBehaviour
         Rigidbody shellInstance = Instantiate(m_Shell, m_FireTransform.position, m_FireTransform.rotation) as Rigidbody;
         
 
-        shellInstance.velocity = m_CurrentLaunchForce * m_FireTransform.forward;
+        shellInstance.velocity = currentLaunchForce * m_FireTransform.forward;
         shellInstance.GetComponent<NetworkObject>().Spawn();
 
         m_ShootingAudio.clip = m_FireClip;
         m_ShootingAudio.Play();
 
-        m_CurrentLaunchForce = m_MinLaunchForce;
+        currentLaunchForce = m_MinLaunchForce;
     }
 }

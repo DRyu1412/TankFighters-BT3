@@ -5,8 +5,8 @@ public class ShellExplosion : NetworkBehaviour
 {
     public LayerMask m_TankMask;
     public GameObject m_ShellExplosionPrefab;
-    public ParticleSystem m_ExplosionParticles;       
-    public AudioSource m_ExplosionAudio;              
+    //public ParticleSystem m_ExplosionParticles;       
+    //public AudioSource m_ExplosionAudio;              
     public float m_MaxDamage = 100f;                  
     public float m_ExplosionForce = 1000f;            
     public float m_MaxLifeTime = 2f;                  
@@ -53,11 +53,11 @@ public class ShellExplosion : NetworkBehaviour
         //m_ExplosionParticles.transform.parent = null;
         GameObject shellExplosion = Instantiate(m_ShellExplosionPrefab, transform.position, transform.rotation);
         shellExplosion.GetComponent<NetworkObject>().Spawn();
-        shellExplosion.GetComponent<ParticleSystem>().Play();
-        //m_ExplosionParticles.Play();
-        m_ExplosionAudio.Play();
 
-        Destroy(m_ExplosionParticles.gameObject, m_ExplosionParticles.duration);
+        //m_ExplosionParticles.Play();
+        //m_ExplosionAudio.Play();
+
+        Destroy(shellExplosion.gameObject, shellExplosion.GetComponent<ParticleSystem>().main.duration);
 
         this.gameObject.GetComponent<NetworkObject>().Despawn();
         Destroy(gameObject);
