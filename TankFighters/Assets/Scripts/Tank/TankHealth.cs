@@ -36,9 +36,10 @@ public class TankHealth : NetworkBehaviour
         SetHealthUI();
     }
 
-
-    public void TakeDamage(float amount)
+    [ServerRpc (RequireOwnership = false)]
+    public void TakeDamageServerRpc(float amount)
     {
+
         // Adjust the tank's current health, update the UI based on the new health and check whether or not the tank is dead.
         m_CurrentHealth -= amount;
 
@@ -53,6 +54,7 @@ public class TankHealth : NetworkBehaviour
 
     private void SetHealthUI()
     {
+
         // Adjust the value and colour of the slider.
         m_Slider.value = m_CurrentHealth;
         m_FillImage.color = Color.Lerp(m_ZeroHealthColor, m_FullHealthColor, m_CurrentHealth / m_StartingHealth);

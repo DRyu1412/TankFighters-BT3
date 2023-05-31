@@ -40,7 +40,7 @@ public class ShellExplosion : NetworkBehaviour
 
             float damage = CalculateDamage(targetRigidbody.position);
 
-            targetHealth.TakeDamage(damage);
+            targetHealth.TakeDamageServerRpc(damage);
         }
 
         PlayExplosionServerRpc();
@@ -49,7 +49,7 @@ public class ShellExplosion : NetworkBehaviour
 
 
 
-    [ServerRpc]
+    [ServerRpc (RequireOwnership = false)]
     private void PlayExplosionServerRpc()
     {
         //m_ExplosionParticles.transform.parent = null;
@@ -59,20 +59,15 @@ public class ShellExplosion : NetworkBehaviour
         //m_ExplosionParticles.Play();
         //m_ExplosionAudio.Play();
 
-        StartCoroutine(Wait(shellExplosion));
+        
         Destroy(shellExplosion.gameObject, shellExplosion.GetComponent<ParticleSystem>().main.duration);
-
+               
         this.gameObject.GetComponent<NetworkObject>().Despawn();
         Destroy(gameObject);
 
     }
 
-    public IEnumerator Wait(GameObject shellExplosion)
-    {
-        yield return new WaitForSeconds(1.5f);
-        shellExplosion.GetComponent<NetworkObject>().Despawn(false);
-        yield return null;
-    }
+ 
 
     private float CalculateDamage(Vector3 targetPosition)
     {
