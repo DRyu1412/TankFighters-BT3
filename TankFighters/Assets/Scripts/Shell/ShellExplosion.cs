@@ -1,6 +1,6 @@
 ﻿using UnityEngine;
-
-public class ShellExplosion : MonoBehaviour
+using Unity.Netcode;
+public class ShellExplosion : NetworkBehaviour
 {
     public LayerMask m_TankMask;
     public ParticleSystem m_ExplosionParticles;       

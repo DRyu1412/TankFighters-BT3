@@ -2,8 +2,9 @@
 using System.Collections;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
+using Unity.Netcode;
 
-public class GameManager : MonoBehaviour
+public class GameManager : NetworkBehaviour
 {
     public int m_NumRoundsToWin = 5;        
     public float m_StartDelay = 3f;         
@@ -27,7 +28,7 @@ public class GameManager : MonoBehaviour
         m_EndWait = new WaitForSeconds(m_EndDelay);
 
         //SpawnAllTanks();
-        SetCameraTargets();
+        //SetCameraTargets();
 
         StartCoroutine(GameLoop());
     }
