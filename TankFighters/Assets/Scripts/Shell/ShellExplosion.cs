@@ -1,4 +1,5 @@
 ﻿using UnityEngine;
+using System.Collections;
 using Unity.Netcode;
 using UnityEngine.Networking;
 public class ShellExplosion : NetworkBehaviour
@@ -10,7 +11,8 @@ public class ShellExplosion : NetworkBehaviour
     public float m_MaxDamage = 100f;                  
     public float m_ExplosionForce = 1000f;            
     public float m_MaxLifeTime = 2f;                  
-    public float m_ExplosionRadius = 5f;              
+    public float m_ExplosionRadius = 5f;
+
 
 
     private void Start()
@@ -57,10 +59,19 @@ public class ShellExplosion : NetworkBehaviour
         //m_ExplosionParticles.Play();
         //m_ExplosionAudio.Play();
 
+        StartCoroutine(Wait(shellExplosion));
         Destroy(shellExplosion.gameObject, shellExplosion.GetComponent<ParticleSystem>().main.duration);
 
         this.gameObject.GetComponent<NetworkObject>().Despawn();
         Destroy(gameObject);
+
+    }
+
+    public IEnumerator Wait(GameObject shellExplosion)
+    {
+        yield return new WaitForSeconds(1.5f);
+        shellExplosion.GetComponent<NetworkObject>().Despawn(false);
+        yield return null;
     }
 
     private float CalculateDamage(Vector3 targetPosition)
