@@ -25,10 +25,7 @@ public class TankHealth : NetworkBehaviour
 
     private void Awake()
     {
-        m_ExplosionParticles = Instantiate(m_ExplosionPrefab).GetComponent<ParticleSystem>();
-        m_ExplosionAudio = m_ExplosionParticles.GetComponent<AudioSource>();
-
-        m_ExplosionParticles.gameObject.SetActive(false);
+  
     }
 
 
@@ -64,7 +61,7 @@ public class TankHealth : NetworkBehaviour
         }
     }
 
-    [ServerRpc(RequireOwnership = false)]
+    [ServerRpc (RequireOwnership = false)]
     private void SetHealthUIServerRpc()
     {
 
@@ -74,18 +71,19 @@ public class TankHealth : NetworkBehaviour
 
     }
 
-    [ServerRpc(RequireOwnership = false)]
+    [ServerRpc (RequireOwnership = false)]
     private void OnDeathServerRpc()
     {
         // Play the effects for the death of the tank and deactivate it.
         m_Dead.Value = true;
 
-        m_ExplosionParticles.GetComponent<NetworkObject>().Spawn();
-        m_ExplosionParticles.transform.position = transform.position;
-        m_ExplosionParticles.gameObject.SetActive(true);
+        GameObject tankExplosion = Instantiate(m_ExplosionPrefab, transform.position, transform.rotation);
+        tankExplosion.GetComponent<NetworkObject>().Spawn();
 
-        m_ExplosionParticles.Play();
-        m_ExplosionAudio.Play();
-        gameObject.SetActive(false);
+        Destroy(tankExplosion, 1f);
+
+        this.gameObject.GetComponent<NetworkObject>().Despawn();
+        Destroy(gameObject);
+        //gameObject.SetActive(false);
     }
 }
