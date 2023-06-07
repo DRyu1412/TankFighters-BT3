@@ -17,9 +17,10 @@ public class TankHealth : NetworkBehaviour
     private AudioSource m_ExplosionAudio;          
     private ParticleSystem m_ExplosionParticles;
 
-    private NetworkVariable<float> m_CurrentHealth = new NetworkVariable<float>();
+    private NetworkVariable<float> m_CurrentHealth = new NetworkVariable<float>(0, NetworkVariableReadPermission.Everyone, NetworkVariableWritePermission.Server);
+    private NetworkVariable<bool> m_Dead = new NetworkVariable<bool>();
     //public float m_CurrentHealth;  
-    private bool m_Dead;  
+    //private bool m_Dead;  
 
 
     private void Awake()
@@ -35,7 +36,7 @@ public class TankHealth : NetworkBehaviour
     {
 
         m_CurrentHealth.Value = m_StartingHealth;
-        m_Dead = false;
+        m_Dead.Value = false;
 
         SetHealthUIServerRpc();
     }
@@ -57,9 +58,9 @@ public class TankHealth : NetworkBehaviour
 
         SetHealthUIServerRpc();
 
-        if (m_CurrentHealth.Value <= 0f && !m_Dead)
+        if (m_CurrentHealth.Value <= 0f && !m_Dead.Value)
         {
-            OnDeath();
+            OnDeathServerRpc();
         }
     }
 
@@ -73,11 +74,11 @@ public class TankHealth : NetworkBehaviour
 
     }
 
-
-    private void OnDeath()
+    [ServerRpc(RequireOwnership = false)]
+    private void OnDeathServerRpc()
     {
         // Play the effects for the death of the tank and deactivate it.
-        m_Dead = true;
+        m_Dead.Value = true;
 
         m_ExplosionParticles.GetComponent<NetworkObject>().Spawn();
         m_ExplosionParticles.transform.position = transform.position;
