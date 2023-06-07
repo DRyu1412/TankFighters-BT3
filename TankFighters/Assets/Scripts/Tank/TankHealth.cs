@@ -1,6 +1,8 @@
 ﻿using UnityEngine;
 using UnityEngine.UI;
 using Unity.Netcode;
+using UnityEngine.Networking;
+
 
 public class TankHealth : NetworkBehaviour
 {
@@ -13,9 +15,11 @@ public class TankHealth : NetworkBehaviour
     
 
     private AudioSource m_ExplosionAudio;          
-    private ParticleSystem m_ExplosionParticles;   
-    private float m_CurrentHealth;  
-    private bool m_Dead;            
+    private ParticleSystem m_ExplosionParticles;
+
+    private NetworkVariable<float> m_CurrentHealth = new NetworkVariable<float>();
+    //public float m_CurrentHealth;  
+    private bool m_Dead;  
 
 
     private void Awake()
@@ -30,34 +34,42 @@ public class TankHealth : NetworkBehaviour
     private void OnEnable()
     {
 
-        m_CurrentHealth = m_StartingHealth;
+        m_CurrentHealth.Value = m_StartingHealth;
         m_Dead = false;
 
-        SetHealthUI();
+        SetHealthUIServerRpc();
     }
+    
+    //[ServerRpc]
+    //private void SetStartingHealthServerRpc()
+    //{
+    //    m_CurrentHealth = m_StartingHealth;
+    //    m_Dead = false;
+    //}
+
 
     [ServerRpc (RequireOwnership = false)]
     public void TakeDamageServerRpc(float amount)
     {
 
         // Adjust the tank's current health, update the UI based on the new health and check whether or not the tank is dead.
-        m_CurrentHealth -= amount;
+        m_CurrentHealth.Value -= amount;
 
-        SetHealthUI();
+        SetHealthUIServerRpc();
 
-        if (m_CurrentHealth <= 0f && !m_Dead)
+        if (m_CurrentHealth.Value <= 0f && !m_Dead)
         {
             OnDeath();
         }
     }
 
-
-    private void SetHealthUI()
+    [ServerRpc(RequireOwnership = false)]
+    private void SetHealthUIServerRpc()
     {
 
         // Adjust the value and colour of the slider.
-        m_Slider.value = m_CurrentHealth;
-        m_FillImage.color = Color.Lerp(m_ZeroHealthColor, m_FullHealthColor, m_CurrentHealth / m_StartingHealth);
+        m_Slider.value = m_CurrentHealth.Value;
+        m_FillImage.color = Color.Lerp(m_ZeroHealthColor, m_FullHealthColor, m_CurrentHealth.Value / m_StartingHealth);
 
     }
 
