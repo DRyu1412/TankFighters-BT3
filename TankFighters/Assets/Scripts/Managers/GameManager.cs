@@ -28,7 +28,7 @@ public class GameManager : NetworkBehaviour
         m_EndWait = new WaitForSeconds(m_EndDelay);
 
         //SpawnAllTanks();
-        //SetCameraTargets();
+        SetCameraTargets();
 
         StartCoroutine(GameLoop());
     }
@@ -40,18 +40,20 @@ public class GameManager : NetworkBehaviour
         {
             m_Tanks[i].m_Instance =
                 Instantiate(m_TankPrefab, m_Tanks[i].m_SpawnPoint.position, m_Tanks[i].m_SpawnPoint.rotation) as GameObject;
+            //m_Tanks[i].m_Instance.GetComponent<NetworkObject>().Spawn();
             m_Tanks[i].m_PlayerNumber = i + 1;
             m_Tanks[i].Setup();
         }
     }
 
 
-    private void SetCameraTargets()
+    public void SetCameraTargets()
     {
         Transform[] targets = new Transform[m_Tanks.Length];
 
         for (int i = 0; i < targets.Length; i++)
         {
+            
             targets[i] = m_Tanks[i].m_Instance.transform;
         }
 

@@ -13,8 +13,10 @@ public class NetworkManagerUI : NetworkBehaviour
 
     private NetworkVariable<int> playersCount = new NetworkVariable<int>(0, NetworkVariableReadPermission.Everyone);
 
+
     private void Awake()
     {
+        GameManager gameManager = FindAnyObjectByType<GameManager>();
         serverButton.onClick.AddListener(() =>
         {
             NetworkManager.Singleton.StartServer();
