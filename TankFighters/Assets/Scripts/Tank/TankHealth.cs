@@ -82,10 +82,12 @@ public class TankHealth : NetworkBehaviour
 
         Destroy(tankExplosion, 1f);
 
-        
-        this.gameObject.GetComponent<NetworkObject>().Despawn();
-        //Destroy(gameObject);
         //gameObject.SetActive(false);
+        //FindAnyObjectByType<GameManager>().SetCameraTargets();
+
+        this.gameObject.GetComponent<NetworkObject>().Despawn();        
+        //Destroy(gameObject);
+        
       
 
     }
