@@ -13,6 +13,7 @@ public class TankHealth : NetworkBehaviour
     public Color m_ZeroHealthColor = Color.red;    
     public GameObject m_ExplosionPrefab;
     
+    
 
     private AudioSource m_ExplosionAudio;          
     private ParticleSystem m_ExplosionParticles;
@@ -85,11 +86,24 @@ public class TankHealth : NetworkBehaviour
         //gameObject.SetActive(false);
         //FindAnyObjectByType<GameManager>().SetCameraTargets();
 
+        WinnerNotificationServerRpc();
         this.gameObject.GetComponent<NetworkObject>().Despawn();        
-        //Destroy(gameObject);
-        
-      
-
+        //Destroy(gameObject);             
     }
 
+    [ServerRpc]
+
+    private void WinnerNotificationServerRpc()
+    {
+        if ((int)OwnerClientId == 0)
+        {
+            FindAnyObjectByType<GameManager>().winner.Value = 2;           
+        }
+        else
+        { 
+            FindAnyObjectByType<GameManager>().winner.Value = 1; 
+        }
+        FindAnyObjectByType<GameManager>().WinnerAnnouncement();
+    }
+    
 }

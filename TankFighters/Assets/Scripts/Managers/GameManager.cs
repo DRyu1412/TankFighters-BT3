@@ -19,7 +19,9 @@ public class GameManager : NetworkBehaviour
     private WaitForSeconds m_StartWait;     
     private WaitForSeconds m_EndWait;       
     private TankManager m_RoundWinner;
-    private TankManager m_GameWinner;       
+    private TankManager m_GameWinner;
+
+    public NetworkVariable<int> winner = new NetworkVariable<int>(0, NetworkVariableReadPermission.Everyone,NetworkVariableWritePermission.Server);
 
 
     private void Start()
@@ -208,5 +210,11 @@ public class GameManager : NetworkBehaviour
         {
             m_Tanks[i].DisableControl();
         }
+    }
+
+    
+    public void WinnerAnnouncement()
+    {
+        m_MessageText.text = "Winner: PLayer " + winner.Value.ToString();
     }
 }

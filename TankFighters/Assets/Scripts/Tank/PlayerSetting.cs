@@ -9,6 +9,7 @@ public class PlayerSetting : NetworkBehaviour
     private MeshRenderer[] renderers;
 
     public List<Color> colors = new List<Color>();
+    public List<Transform> positions = new List<Transform>();
 
     private void Awake()
     {
@@ -22,5 +23,7 @@ public class PlayerSetting : NetworkBehaviour
         {
             renderers[i].material.color = colors[(int) OwnerClientId];
         }
+
+        transform.position = positions[(int)OwnerClientId].position;
     }
 }

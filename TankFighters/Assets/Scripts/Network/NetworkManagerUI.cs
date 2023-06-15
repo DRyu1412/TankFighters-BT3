@@ -36,7 +36,6 @@ public class NetworkManagerUI : NetworkBehaviour
         playersCountText.text = "PLayers: " + playersCount.Value.ToString();
 
         if (!IsServer) return;
-        playersCount.Value = NetworkManager.Singleton.ConnectedClients.Count;
-        
+        playersCount.Value = NetworkManager.Singleton.ConnectedClients.Count;        
     }
 }
